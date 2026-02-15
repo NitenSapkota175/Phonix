@@ -1,0 +1,123 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Team Network{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-3xl font-black text-slate-900">Your Sales Force</h2>
+            <p class="text-slate-500">Managing {{ total_network }} members across 20 tiers.</p>
+        </div>
+        <div class="hidden sm:block">
+            <button onclick="copyToClipboard('{{ user.get_referral_link }}')"
+                class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-xl font-bold flex items-center hover:bg-indigo-100 transition-colors">
+                <i class="fas fa-link mr-2"></i> Referral Link
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-indigo-600 rounded-3xl p-6 text-white shadow-xl shadow-indigo-100">
+            <p class="text-xs text-indigo-100 font-black uppercase tracking-widest mb-1">Total Network</p>
+            <h3 class="text-4xl font-black">{{ total_network }}</h3>
+            <p class="text-xs text-indigo-200 mt-2">Active across all levels</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+            <p class="text-xs text-slate-400 font-black uppercase tracking-widest mb-1">Direct Referrals</p>
+            <h3 class="text-4xl font-black text-slate-900">{{ user.direct_referrals_count }}</h3>
+            <p class="text-xs text-green-500 font-bold mt-2"><i class="fas fa-arrow-up mr-1"></i> Level 1</p>
+        </div>
+        <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+            <p class="text-xs text-slate-400 font-black uppercase tracking-widest mb-1">Current Rank</p>
+            <h3 class="text-4xl font-black text-slate-900">{{ rank.get_current_rank_display|default:"No Rank" }}</h3>
+            <p class="text-xs text-indigo-400 font-bold mt-2">Bonus eligible</p>
+        </div>
+    </div>
+
+    <!-- 20-Level Accordion -->
+    <div class="space-y-3">
+        {% for level in level_stats %}
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden group">
+            <button onclick="toggleLevel('level{{ level.level }}')"
+                class="w-full px-8 py-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                <div class="flex items-center space-x-4">
+                    <span
+                        class="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-lg flex items-center justify-center font-black text-sm">L{{ level.level }}</span>
+                    <span class="font-bold text-slate-800">Generation Level {{ level.level }}</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-xs font-black text-slate-500 uppercase">{{ level.count }} Users</span>
+                    <i id="icon-level{{ level.level }}"
+                        class="fas fa-chevron-down text-slate-300 transition-transform duration-300"></i>
+                </div>
+            </button>
+            <div id="content-level{{ level.level }}" class="hidden overflow-hidden border-t border-slate-50">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-8 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">User
+                                </th>
+                                <th class="px-8 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Joined
+                                </th>
+                                <th class="px-8 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">
+                                    Invested</th>
+                                <th class="px-8 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Status
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-50">
+                            {% for member in level.members %}
+                            <tr>
+                                <td class="px-8 py-4">
+                                    <div class="flex items-center">
+                                        <div
+                                            class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 text-xs font-bold mr-3">
+                                            {{ member.username|slice:":1"|upper }}</div>
+                                        <span class="text-sm font-bold text-slate-700">{{ member.username }}</span>
+                                    </div>
+                                </td>
+                                <td class="px-8 py-4 text-xs text-slate-500 font-medium">{{ member.joined_at|date:"M d, Y" }}</td>
+                                <td class="px-8 py-4 text-sm font-black text-slate-900">${{ member.total_invested }}
+                                </td>
+                                <td class="px-8 py-4">
+                                    {% if member.is_active_investor %}
+                                    <span
+                                        class="px-2 py-0.5 bg-green-50 text-green-600 rounded text-[10px] font-black uppercase">Active</span>
+                                    {% else %}
+                                    <span
+                                        class="px-2 py-0.5 bg-slate-100 text-slate-400 rounded text-[10px] font-black uppercase">Inactive</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="px-8 py-8 text-center text-slate-400 text-sm italic">No users in
+                                    this level yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function toggleLevel(id) {
+        const content = document.getElementById('content-' + id);
+        const icon = document.getElementById('icon-' + id);
+        content.classList.toggle('hidden');
+        icon.classList.toggle('rotate-180');
+    }
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(function () {
+            alert('Referral link copied to clipboard!');
+        });
+    }
+</script>
+{% endblock %}

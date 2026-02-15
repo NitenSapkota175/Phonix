@@ -1,0 +1,92 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Withdraw Funds{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+    <div class="bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-700 to-indigo-500 p-8 text-white">
+            <h3 class="text-2xl font-black mb-1 text-center">Withdraw USDT (TRC20)</h3>
+            <p class="text-indigo-100 text-sm text-center opacity-90">Instant withdrawals to your TRC20 wallet</p>
+        </div>
+
+        <div class="p-8 space-y-8">
+            <div class="flex items-center justify-between p-6 bg-slate-50 border border-slate-100 rounded-2xl">
+                <div>
+                    <p class="text-xs text-slate-400 font-black uppercase tracking-widest mb-1">Available Balance</p>
+                    <h3 class="text-3xl font-black text-slate-900">${{ user.wallet_balance }}</h3>
+                </div>
+                <div
+                    class="w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center text-indigo-600 text-xl">
+                    <i class="fas fa-wallet"></i>
+                </div>
+            </div>
+
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                <div>
+                    <label class="block text-slate-700 font-bold mb-2">Withdrawal Amount ($)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                        <input type="number" name="amount" id="withdrawAmount"
+                            class="w-full pl-10 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-bold"
+                            placeholder="Minimum 20" min="20" required>
+                    </div>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase mt-2">A 5% withdrawal fee will be applied.
+                    </p>
+                </div>
+
+                <div>
+                    <label class="block text-slate-700 font-bold mb-2">Payout Address (USDT TRC20)</label>
+                    <input type="text" name="wallet_address"
+                        class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-bold text-sm"
+                        placeholder="T..." required value="{{ user.trc20_wallet_address|default:'' }}">
+                    <p class="text-[10px] text-red-400 font-bold uppercase mt-2"><i
+                            class="fas fa-exclamation-circle mr-1"></i> Double check your address. Transactions are
+                        irreversible.</p>
+                </div>
+
+                <!-- Live Fee Calculator -->
+                <div class="bg-indigo-50/50 p-6 rounded-2xl border border-indigo-100 space-y-3">
+                    <div class="flex justify-between text-sm text-slate-600 font-medium">
+                        <span>Requested Amount</span>
+                        <span id="displayAmount">$0.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm text-red-500 font-medium">
+                        <span>Processing Fee (5%)</span>
+                        <span id="displayFee">-$0.00</span>
+                    </div>
+                    <div class="pt-3 border-t border-indigo-100 flex justify-between font-black text-slate-900">
+                        <span>Net Payout</span>
+                        <span id="displayNet" class="text-indigo-600 font-black text-lg">$0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full py-5 bg-indigo-600 text-white font-black rounded-2xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all transform active:scale-95">
+                    Submit Withdrawal Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="mt-8 text-center">
+        <a href="{% url 'wallet:history' %}"
+            class="text-slate-400 hover:text-indigo-600 font-bold text-sm transition-colors">
+            <i class="fas fa-history mr-2"></i> View Recent Withdrawals
+        </a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('withdrawAmount').addEventListener('input', function (e) {
+        const amount = parseFloat(e.target.value) || 0;
+        const fee = amount * 0.05;
+        const net = amount - fee;
+
+        document.getElementById('displayAmount').innerText = '$' + amount.toFixed(2);
+        document.getElementById('displayFee').innerText = '-$' + fee.toFixed(2);
+        document.getElementById('displayNet').innerText = '$' + (net > 0 ? net.toFixed(2) : '0.00');
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Wallet Transactions{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-2xl font-black text-slate-900">Transaction History</h2>
+            <p class="text-slate-500">Track all your financial activities in one place.</p>
+        </div>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'wallet:deposit' %}"
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center shadow-lg shadow-green-100">
+                <i class="fas fa-arrow-down mr-2"></i> Deposit
+            </a>
+            <a href="{% url 'wallet:withdraw' %}"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center shadow-lg shadow-indigo-100">
+                <i class="fas fa-arrow-up mr-2"></i> Withdraw
+            </a>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Date & Time
+                        </th>
+                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Type</th>
+                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Amount</th>
+                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Fee</th>
+                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Net</th>
+                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for txn in transactions %}
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-8 py-6">
+                            <span class="text-sm text-slate-600 font-medium">{{ txn.created_at|date:"M d, Y" }}</span>
+                            <span class="block text-[10px] text-slate-400 font-bold mt-1 uppercase">{{ txn.created_at|date:"H:i A" }}</span>
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="px-3 py-1 rounded-lg text-xs font-black uppercase tracking-tight
+                                {% if txn.type == 'deposit' %}bg-green-50 text-green-600
+                                {% elif txn.type == 'withdrawal' %}bg-red-50 text-red-600
+                                {% elif txn.type == 'purchase' %}bg-indigo-50 text-indigo-600
+                                {% else %}bg-blue-50 text-blue-600{% endif %}">
+                                {{ txn.get_type_display }}
+                            </span>
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="text-sm font-black text-slate-900">${{ txn.amount }}</span>
+                        </td>
+                        <td class="px-8 py-6 text-sm text-slate-400 font-bold">
+                            -${{ txn.fee }}
+                        </td>
+                        <td class="px-8 py-6">
+                            <span class="text-sm font-black text-slate-900">${{ txn.net_amount }}</span>
+                        </td>
+                        <td class="px-8 py-6">
+                            {% if txn.status == 'completed' %}
+                            <div class="flex items-center text-green-600 font-bold text-xs uppercase tracking-widest">
+                                <i class="fas fa-check-circle mr-2"></i> Completed
+                            </div>
+                            {% elif txn.status == 'pending' %}
+                            <div class="flex items-center text-yellow-600 font-bold text-xs uppercase tracking-widest">
+                                <i class="fas fa-clock mr-2"></i> Pending
+                            </div>
+                            {% elif txn.status == 'processing' %}
+                            <div class="flex items-center text-blue-600 font-bold text-xs uppercase tracking-widest">
+                                <i class="fas fa-sync-alt mr-2 animate-spin"></i> Processing
+                            </div>
+                            {% else %}
+                            <div class="flex items-center text-red-600 font-bold text-xs uppercase tracking-widest">
+                                <i class="fas fa-times-circle mr-2"></i> {{ txn.status }}
+                            </div>
+                            {% endif %}
+                            <p class="text-[10px] text-slate-400 mt-1 truncate max-w-[120px]">{{ txn.description }}</p>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-8 py-16 text-center">
+                            <div class="max-w-xs mx-auto text-slate-400">
+                                <i class="fas fa-history text-4xl mb-4 opacity-20"></i>
+                                <p class="text-sm font-medium">No transactions found in your history.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

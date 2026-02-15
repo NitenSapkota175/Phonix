@@ -1,0 +1,83 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <!-- Profile Header -->
+    <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
+            <div
+                class="w-24 h-24 bg-gradient-to-tr from-indigo-600 to-purple-600 rounded-full flex items-center justify-center text-white text-4xl font-black shadow-lg">
+                {{ user.username|slice:":1"|upper }}</div>
+            <div class="text-center md:text-left flex-1">
+                <h2 class="text-3xl font-black text-slate-900 mb-1">{{ user.username }}</h2>
+                <p class="text-slate-500 font-medium mb-4">{{ user.email }}</p>
+                <div class="flex flex-wrap gap-2 justify-center md:justify-start">
+                    <span
+                        class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-xs font-black uppercase tracking-widest">Active
+                        Member</span>
+                    <span
+                        class="px-3 py-1 bg-purple-50 text-purple-600 rounded-lg text-xs font-black uppercase tracking-widest">{{ rank.get_current_rank_display|default:"No Rank" }}</span>
+                    <span
+                        class="px-3 py-1 bg-slate-50 text-slate-500 rounded-lg text-xs font-black uppercase tracking-widest">Joined
+                        {{ user.joined_at|date:"M Y" }}</span>
+                </div>
+            </div>
+            <div class="text-center">
+                <p class="text-xs text-slate-400 font-black uppercase tracking-widest mb-1">Total Network</p>
+                <h3 class="text-3xl font-black text-slate-900">{{ total_network }}</h3>
+            </div>
+        </div>
+        <div class="absolute -bottom-20 -right-20 w-64 h-64 bg-slate-50 rounded-full -z-0"></div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Account Details -->
+        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm space-y-6">
+            <h4 class="text-xl font-bold text-slate-900">Account Details</h4>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center py-3 border-b border-slate-50">
+                    <span class="text-slate-500 font-medium">Username</span>
+                    <span class="font-bold text-slate-900">{{ user.username }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-slate-50">
+                    <span class="text-slate-500 font-medium">Email Address</span>
+                    <span class="font-bold text-slate-900">{{ user.email }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-slate-50">
+                    <span class="text-slate-500 font-medium">Referral Code</span>
+                    <span class="font-black text-indigo-600 tracking-wider">{{ user.referral_code }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3">
+                    <span class="text-slate-500 font-medium">TRC20 Wallet</span>
+                    <span class="text-sm font-bold text-slate-900 truncate max-w-[150px]">{{ user.trc20_wallet_address|default:"Not Set" }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Referral Stats -->
+        <div class="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm space-y-6">
+            <h4 class="text-xl font-bold text-slate-900">Referral Overview</h4>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center py-3 border-b border-slate-50">
+                    <span class="text-slate-500 font-medium">Referred By</span>
+                    <span class="font-bold text-slate-900">{{ user.referred_by.username|default:"System" }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-slate-50">
+                    <span class="text-slate-500 font-medium">Direct Referrals</span>
+                    <span class="font-bold text-slate-900">{{ user.direct_referrals_count }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3 border-b border-slate-50">
+                    <span class="text-slate-500 font-medium">Total Network</span>
+                    <span class="font-bold text-slate-900">{{ total_network }}</span>
+                </div>
+                <div class="flex justify-between items-center py-3">
+                    <span class="text-slate-500 font-medium">Active Partner</span>
+                    <span class="text-green-500 font-black">YES</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
