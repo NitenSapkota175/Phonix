@@ -1,169 +1,219 @@
 {% extends 'dashboard/base.html' %}
 
-{% block page_title %}Investment Plans{% endblock %}
+{% block page_title %}Investments{% endblock %}
 
 {% block content %}
-<div class="space-y-10">
-    <!-- Tiers Section -->
-    <div>
-        <div class="mb-8">
-            <h2 class="text-3xl font-black text-slate-900">Choose Your Plan</h2>
-            <p class="text-slate-500">Earn steady returns and build your generation wealth.</p>
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-black text-slate-900">Investment Packages</h2>
+            <p class="text-slate-500">Choose a tier and grow your wealth with daily bond income.</p>
         </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {% for tier in tiers %}
-            <div
-                class="bg-white rounded-3xl p-8 border border-slate-100 shadow-xl relative overflow-hidden group hover:border-indigo-500 transition-all duration-300">
-                <div class="relative z-10 text-center">
-                    <span
-                        class="px-4 py-1.5 bg-indigo-50 text-indigo-600 rounded-full text-xs font-black uppercase tracking-widest mb-4 inline-block">{{ tier.name }}</span>
-                    <h3 class="text-5xl font-black text-slate-900 mb-2">{{ tier.rate }}</h3>
-                    <p class="text-slate-400 font-bold text-sm uppercase mb-8">Monthly Return</p>
-
-                    <ul class="space-y-4 mb-10 text-left mx-auto max-w-[180px]">
-                        <li class="flex items-center text-slate-600 font-medium">
-                            <i class="fas fa-check-circle text-indigo-500 mr-3"></i> {{ tier.range }}
-                        </li>
-                        <li class="flex items-center text-slate-600 font-medium">
-                            <i class="fas fa-check-circle text-indigo-500 mr-3"></i> 300% Cap
-                        </li>
-                        <li class="flex items-center text-slate-600 font-medium">
-                            <i class="fas fa-check-circle text-indigo-500 mr-3"></i> Mon-Fri Payout
-                        </li>
-                    </ul>
-
-                    <button onclick="openModal('modal{{ forloop.counter }}')"
-                        class="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-xl hover:shadow-slate-200">
-                        Invest Now
-                    </button>
-                </div>
-
-                <!-- Background Decoration -->
-                <div
-                    class="absolute -top-10 -right-10 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 transition-transform duration-500">
-                </div>
+        <div class="flex items-center space-x-3">
+            <div class="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm">
+                <span class="text-slate-500">Available Balance:</span>
+                <span class="font-black text-indigo-600 ml-1">${{ user.wallet_balance }}</span>
             </div>
-
-            <!-- Modal for each tier -->
-            <div id="modal{{ forloop.counter }}"
-                class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-                <div class="bg-white rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl transform transition-all">
-                    <div class="p-8">
-                        <div class="flex justify-between items-center mb-6">
-                            <h3 class="text-2xl font-bold">Invest in {{ tier.name }}</h3>
-                            <button onclick="closeModal('modal{{ forloop.counter }}')"
-                                class="text-slate-400 hover:text-slate-600"><i
-                                    class="fas fa-times text-xl"></i></button>
-                        </div>
-
-                        <form action="{% url 'investment:buy' %}" method="POST" class="space-y-6">
-                            {% csrf_token %}
-                            <div>
-                                <label class="block text-slate-700 font-bold mb-2">Investment Amount ($)</label>
-                                <div class="relative">
-                                    <span
-                                        class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
-                                    <input type="number" name="amount"
-                                        class="w-full pl-10 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none transition-all font-bold"
-                                        placeholder="Min 50" min="50" required>
-                                </div>
-                            </div>
-
-                            <div class="bg-indigo-50 p-4 rounded-2xl border border-indigo-100">
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" name="use_bonus"
-                                        class="w-5 h-5 rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 mr-3">
-                                    <span class="text-sm font-semibold text-slate-700">Use Registration Bonus (Max
-                                        10%)</span>
-                                </label>
-                                <p class="text-[10px] text-indigo-400 font-bold uppercase mt-2 ml-8">Available: ${{ user.registration_bonus }}</p>
-                            </div>
-
-                            <div class="text-sm text-slate-500 bg-slate-50 p-4 rounded-2xl">
-                                <i class="fas fa-info-circle mr-2 text-indigo-500"></i>
-                                This investment will earn 3x returns. Once reached, you'll need a new package.
-                            </div>
-
-                            <button type="submit"
-                                class="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl shadow-lg shadow-indigo-200 hover:bg-indigo-700 transition-all">
-                                Confirm & Invest
-                            </button>
-                        </form>
-                    </div>
-                </div>
+            {% if user.registration_bonus > 0 %}
+            <div class="bg-green-50 border border-green-200 rounded-xl px-4 py-2 text-sm">
+                <span class="text-green-600">Bonus:</span>
+                <span class="font-black text-green-700 ml-1">${{ user.registration_bonus }}</span>
             </div>
-            {% endfor %}
+            {% endif %}
         </div>
     </div>
 
-    <!-- User Subscriptions -->
-    <div class="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden">
-        <div class="p-8 border-b border-slate-50 flex items-center justify-between">
-            <h3 class="text-xl font-bold text-slate-900">My Active Portfolios</h3>
-            <span
-                class="px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-xs font-bold uppercase tracking-widest">{{ subscriptions.count }} Active</span>
+    <!-- Tier Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Tier 1 -->
+        <div
+            class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all overflow-hidden group">
+            <div class="bg-gradient-to-br from-blue-500 to-blue-700 p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <span
+                        class="bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Tier
+                        1</span>
+                    <i class="fas fa-seedling text-2xl opacity-80"></i>
+                </div>
+                <h3 class="text-3xl font-black">6%</h3>
+                <p class="text-blue-100 text-sm font-medium">Monthly Return</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Investment Range</span>
+                    <span class="font-bold text-slate-800">$50 – $3,000</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Daily Income</span>
+                    <span class="font-bold text-blue-600">0.2% / day</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Earnings Cap</span>
+                    <span class="font-bold text-slate-800">3x Investment</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Payout Days</span>
+                    <span class="font-bold text-slate-800">Mon – Fri</span>
+                </div>
+                <button onclick="openBuyModal(50, 3000, 6)"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-bold transition-all mt-2 shadow-lg shadow-blue-100">
+                    Invest Now
+                </button>
+            </div>
+        </div>
+
+        <!-- Tier 2 -->
+        <div
+            class="bg-white rounded-2xl border-2 border-indigo-200 shadow-xl hover:shadow-2xl transition-all overflow-hidden group relative">
+            <div class="absolute top-4 right-4 z-10">
+                <span
+                    class="bg-indigo-600 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full shadow-lg">Popular</span>
+            </div>
+            <div class="bg-gradient-to-br from-indigo-600 to-purple-700 p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <span
+                        class="bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Tier
+                        2</span>
+                    <i class="fas fa-rocket text-2xl opacity-80"></i>
+                </div>
+                <h3 class="text-3xl font-black">8%</h3>
+                <p class="text-indigo-100 text-sm font-medium">Monthly Return</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Investment Range</span>
+                    <span class="font-bold text-slate-800">$3,001 – $5,000</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Daily Income</span>
+                    <span class="font-bold text-indigo-600">0.267% / day</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Earnings Cap</span>
+                    <span class="font-bold text-slate-800">3x Investment</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Payout Days</span>
+                    <span class="font-bold text-slate-800">Mon – Fri</span>
+                </div>
+                <button onclick="openBuyModal(3001, 5000, 8)"
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-bold transition-all mt-2 shadow-lg shadow-indigo-100">
+                    Invest Now
+                </button>
+            </div>
+        </div>
+
+        <!-- Tier 3 -->
+        <div
+            class="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg transition-all overflow-hidden group">
+            <div class="bg-gradient-to-br from-amber-500 to-orange-600 p-6 text-white">
+                <div class="flex items-center justify-between mb-4">
+                    <span
+                        class="bg-white/20 text-white text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Tier
+                        3</span>
+                    <i class="fas fa-crown text-2xl opacity-80"></i>
+                </div>
+                <h3 class="text-3xl font-black">10%</h3>
+                <p class="text-amber-100 text-sm font-medium">Monthly Return</p>
+            </div>
+            <div class="p-6 space-y-4">
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Investment Range</span>
+                    <span class="font-bold text-slate-800">$5,001+</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Daily Income</span>
+                    <span class="font-bold text-amber-600">0.333% / day</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Earnings Cap</span>
+                    <span class="font-bold text-slate-800">3x Investment</span>
+                </div>
+                <div class="flex justify-between text-sm">
+                    <span class="text-slate-500">Payout Days</span>
+                    <span class="font-bold text-slate-800">Mon – Fri</span>
+                </div>
+                <button onclick="openBuyModal(5001, 999999, 10)"
+                    class="w-full bg-amber-500 hover:bg-amber-600 text-white py-3 rounded-xl font-bold transition-all mt-2 shadow-lg shadow-amber-100">
+                    Invest Now
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Subscriptions -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-50 flex items-center justify-between">
+            <h5 class="font-bold text-slate-800">My Subscriptions</h5>
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-widest">{{ subscriptions.count }}
+                Total</span>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead class="bg-slate-50">
                     <tr>
-                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Plan Details
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Tier</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Amount</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Rate</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Earned</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Cap Progress
                         </th>
-                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Investment
-                        </th>
-                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Returns</th>
-                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Progress</th>
-                        <th class="px-8 py-5 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Started</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     {% for sub in subscriptions %}
                     <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-8 py-6">
-                            <div class="flex items-center">
-                                <div
-                                    class="w-10 h-10 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mr-4">
-                                    <i class="fas fa-gem"></i>
+                        <td class="px-6 py-5">
+                            <span class="px-3 py-1 rounded-lg text-xs font-black uppercase
+                                {% if sub.tier == 'tier_1' %}bg-blue-50 text-blue-600
+                                {% elif sub.tier == 'tier_2' %}bg-indigo-50 text-indigo-600
+                                {% else %}bg-amber-50 text-amber-600{% endif %}">
+                                {{ sub.get_tier_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-black text-slate-900">${{ sub.amount }}</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-bold text-green-600">{{ sub.monthly_rate }}%/mo</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-bold text-slate-700">${{ sub.total_earned }}</span>
+                        </td>
+                        <td class="px-6 py-5 min-w-[160px]">
+                            <div class="flex items-center space-x-2">
+                                <div class="flex-1 bg-slate-100 rounded-full h-2">
+                                    <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full"
+                                        style="width: {{ sub.cap_percentage|floatformat:0 }}%"></div>
                                 </div>
-                                <div>
-                                    <p class="font-bold text-slate-900">{{ sub.get_tier_display }}</p>
-                                    <p class="text-xs text-slate-400">{{ sub.started_at|date:"M d, Y" }}</p>
-                                </div>
+                                <span class="text-xs font-bold text-slate-500">{{ sub.cap_percentage|floatformat:1
+                                    }}%</span>
                             </div>
                         </td>
-                        <td class="px-8 py-6">
-                            <p class="font-black text-slate-900">${{ sub.amount }}</p>
-                            <p class="text-xs text-slate-500">Term: 300% Cap</p>
-                        </td>
-                        <td class="px-8 py-6 text-green-600 font-black">+${{ sub.total_earned }}</td>
-                        <td class="px-8 py-6 min-w-[200px]">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-bold text-slate-400">{{ sub.earnings_percentage|floatformat:1 }}%</span>
-                                <span class="text-xs font-bold text-slate-900">${{ sub.earnings_cap }}</span>
-                            </div>
-                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                                <div class="bg-indigo-600 h-full rounded-full"
-                                    style="width: {{ sub.earnings_percentage }}%"></div>
-                            </div>
-                        </td>
-                        <td class="px-8 py-6">
+                        <td class="px-6 py-5">
                             {% if sub.is_active %}
-                            <span class="flex items-center text-green-600 font-bold text-sm">
-                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Earning
+                            <span class="flex items-center text-green-600 font-bold text-xs uppercase tracking-widest">
+                                <i class="fas fa-circle text-[6px] mr-2 animate-pulse"></i> Active
                             </span>
                             {% else %}
-                            <span class="text-slate-400 font-bold text-sm">Completed</span>
+                            <span class="flex items-center text-slate-400 font-bold text-xs uppercase tracking-widest">
+                                <i class="fas fa-check-circle mr-2"></i> Completed
+                            </span>
                             {% endif %}
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="text-sm text-slate-500">{{ sub.started_at|date:"M d, Y" }}</span>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="px-8 py-16 text-center">
-                            <div class="max-w-xs mx-auto">
-                                <i class="fas fa-rocket text-4xl text-slate-200 mb-4"></i>
-                                <p class="text-slate-500 font-medium">You don't have any active investments yet. Start
-                                    with a minimum of $50.</p>
+                        <td colspan="7" class="px-6 py-16 text-center">
+                            <div class="max-w-xs mx-auto text-slate-400">
+                                <i class="fas fa-rocket text-4xl mb-4 opacity-20"></i>
+                                <p class="text-sm font-medium">No subscriptions yet. Start investing above!</p>
                             </div>
                         </td>
                     </tr>
@@ -174,14 +224,107 @@
     </div>
 </div>
 
+<!-- Buy Modal -->
+<div id="buyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-black text-slate-900">New Investment</h3>
+            <button onclick="closeBuyModal()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <form method="post" action="{% url 'investment:buy' %}" id="buyForm">
+            {% csrf_token %}
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Investment Amount (USDT)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
+                        <input type="number" name="amount" id="amountInput" step="0.01"
+                            class="w-full pl-8 pr-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold text-slate-900"
+                            placeholder="Enter amount" required>
+                    </div>
+                    <p id="amountHint" class="text-xs text-slate-400 mt-1"></p>
+                </div>
+
+                {% if user.registration_bonus > 0 %}
+                <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" name="use_bonus" id="useBonusCheck"
+                            class="w-4 h-4 text-indigo-600 rounded">
+                        <div>
+                            <p class="font-bold text-green-800 text-sm">Use Registration Bonus</p>
+                            <p class="text-xs text-green-600">Available: ${{ user.registration_bonus }} (up to 10% of
+                                investment, max $1)</p>
+                        </div>
+                    </label>
+                </div>
+                {% endif %}
+
+                <div class="bg-slate-50 rounded-xl p-4 space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Tier</span>
+                        <span id="modalTier" class="font-bold text-slate-800">–</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Monthly Rate</span>
+                        <span id="modalRate" class="font-bold text-green-600">–</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Earnings Cap (3x)</span>
+                        <span id="modalCap" class="font-bold text-slate-800">–</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Your Balance</span>
+                        <span class="font-bold text-slate-800">${{ user.wallet_balance }}</span>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-4 rounded-xl font-black transition-all shadow-lg shadow-indigo-200 text-lg">
+                    Confirm Investment
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
 <script>
-    function openModal(id) {
-        document.getElementById(id).classList.remove('hidden');
-        document.body.classList.add('overflow-hidden');
+    let currentMin = 50, currentMax = 999999, currentRate = 6;
+
+    function openBuyModal(min, max, rate) {
+        currentMin = min; currentMax = max; currentRate = rate;
+        document.getElementById('amountInput').min = min;
+        document.getElementById('amountInput').max = max;
+        document.getElementById('amountInput').value = '';
+        document.getElementById('amountHint').textContent = `Range: $${min.toLocaleString()} – ${max >= 999999 ? 'unlimited' : '$' + max.toLocaleString()}`;
+
+        const tierMap = { 6: 'Tier 1', 8: 'Tier 2', 10: 'Tier 3' };
+        document.getElementById('modalTier').textContent = tierMap[rate];
+        document.getElementById('modalRate').textContent = rate + '% / month';
+        document.getElementById('modalCap').textContent = '3x your investment';
+
+        document.getElementById('buyModal').classList.remove('hidden');
+        document.getElementById('buyModal').classList.add('flex');
     }
-    function closeModal(id) {
-        document.getElementById(id).classList.add('hidden');
-        document.body.classList.remove('overflow-hidden');
+
+    function closeBuyModal() {
+        document.getElementById('buyModal').classList.add('hidden');
+        document.getElementById('buyModal').classList.remove('flex');
     }
+
+    document.getElementById('amountInput').addEventListener('input', function () {
+        const val = parseFloat(this.value) || 0;
+        document.getElementById('modalCap').textContent = val > 0 ? '$' + (val * 3).toFixed(2) : '3x your investment';
+    });
+
+    // Close modal on backdrop click
+    document.getElementById('buyModal').addEventListener('click', function (e) {
+        if (e.target === this) closeBuyModal();
+    });
 </script>
 {% endblock %}

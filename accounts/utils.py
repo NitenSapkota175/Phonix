@@ -132,6 +132,7 @@ def calculate_leg_volume(user):
         Decimal: Total investment volume
     """
     from decimal import Decimal
+    from django.db import models
     from investment.models import Subscription
     
     def get_volume_recursive(current_user):

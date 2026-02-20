@@ -1,0 +1,169 @@
+{% extends 'dashboard/base.html' %}
+
+{% block page_title %}Rank & Bonuses{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div>
+        <h2 class="text-2xl font-black text-slate-900">Rank & Weekly Bonuses</h2>
+        <p class="text-slate-500">Advance your rank by growing your network legs and earn weekly bonuses.</p>
+    </div>
+
+    <!-- Current Rank Card -->
+    <div
+        class="bg-gradient-to-br from-indigo-700 to-purple-800 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="relative z-10">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div>
+                    <p class="text-indigo-200 text-sm font-bold uppercase tracking-widest mb-2">Current Rank</p>
+                    {% if rank %}
+                    <h3 class="text-4xl font-black mb-2">{{ rank.get_current_rank_display }}</h3>
+                    <p class="text-indigo-200">Weekly Bonus: <span class="text-white font-black">${{
+                            rank.weekly_bonus_amount }}</span></p>
+                    {% else %}
+                    <h3 class="text-4xl font-black mb-2">Unranked</h3>
+                    <p class="text-indigo-200">Build your network to earn weekly bonuses</p>
+                    {% endif %}
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
+                        <p class="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Main Leg</p>
+                        <p class="text-2xl font-black">${{ rank.main_leg_volume|default:"0" }}</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
+                        <p class="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Other Legs</p>
+                        <p class="text-2xl font-black">${{ rank.other_legs_volume|default:"0" }}</p>
+                    </div>
+                    {% if rank %}
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
+                        <p class="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Weeks Left</p>
+                        <p class="text-2xl font-black">{{ rank.weeks_remaining }}</p>
+                    </div>
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
+                        <p class="text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Weekly Bonus</p>
+                        <p class="text-2xl font-black">${{ rank.weekly_bonus_amount }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rank Tiers Table -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-50">
+            <h5 class="font-bold text-slate-800">Rank Requirements & Bonuses</h5>
+            <p class="text-slate-400 text-sm mt-1">Rank is based on weekly leg volume. Bonuses paid every Monday.</p>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Rank</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Main Leg</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Other Legs
+                        </th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Weekly Bonus
+                        </th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Duration</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for tier in rank_tiers %}
+                    <tr
+                        class="hover:bg-slate-50 transition-colors {% if rank and rank.current_rank == tier.key %}bg-indigo-50{% endif %}">
+                        <td class="px-6 py-5">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center text-sm
+                                    {% if tier.key == 'connector' %}bg-blue-100 text-blue-600
+                                    {% elif tier.key == 'builder' %}bg-green-100 text-green-600
+                                    {% elif tier.key == 'professional' %}bg-purple-100 text-purple-600
+                                    {% elif tier.key == 'executive' %}bg-orange-100 text-orange-600
+                                    {% elif tier.key == 'director' %}bg-red-100 text-red-600
+                                    {% else %}bg-yellow-100 text-yellow-600{% endif %}">
+                                    <i class="fas fa-{{ tier.icon }}"></i>
+                                </div>
+                                <span class="font-bold text-slate-800">{{ tier.name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-bold text-slate-700">${{ tier.main_leg }}</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-bold text-slate-700">${{ tier.other_legs }}</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-black text-green-600">${{ tier.bonus }}/week</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="text-slate-500 text-sm">{{ tier.weeks }} weeks</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            {% if rank and rank.current_rank == tier.key %}
+                            <span
+                                class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-black uppercase">Current</span>
+                            {% elif rank and rank.current_rank > tier.key %}
+                            <span
+                                class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-black uppercase">Achieved</span>
+                            {% else %}
+                            <span
+                                class="px-3 py-1 bg-slate-100 text-slate-500 rounded-full text-xs font-bold uppercase">Locked</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bonus History -->
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+        <div class="p-6 border-b border-slate-50">
+            <h5 class="font-bold text-slate-800">Weekly Bonus History</h5>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Date</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Rank</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Amount</th>
+                        <th class="px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for txn in bonus_history %}
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-5">
+                            <span class="text-sm text-slate-600">{{ txn.created_at|date:"M d, Y" }}</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="text-sm font-bold text-slate-700">{{ txn.description }}</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span class="font-black text-green-600">+${{ txn.amount }}</span>
+                        </td>
+                        <td class="px-6 py-5">
+                            <span
+                                class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold uppercase">Paid</span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="px-6 py-12 text-center text-slate-400">
+                            <i class="fas fa-trophy text-4xl mb-3 opacity-20"></i>
+                            <p class="text-sm font-medium">No weekly bonuses earned yet. Advance your rank to start
+                                earning!</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
