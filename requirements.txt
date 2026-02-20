@@ -1,12 +1,32 @@
-Django==4.2.7
-psycopg2-binary==2.9.9
-celery==5.3.4
-redis==5.0.1
-django-celery-beat==2.5.0
-tronpy==0.4.0
-pillow==10.1.0
-qrcode==7.4.2
-djangorestframework==3.14.0
-python-decouple==3.8
-gunicorn==21.2.0
-cryptography==41.0.7
+# ─── Core Framework ─────────────────────────────────────────────────────────
+Django>=5.0,<5.2
+djangorestframework>=3.15
+djangorestframework-simplejwt>=5.3
+
+# ─── Database ─────────────────────────────────────────────────────────────────
+psycopg2-binary>=2.9.9
+
+# ─── Cache / Queue ───────────────────────────────────────────────────────────
+redis>=5.0.1
+django-redis>=5.4.0
+celery[redis]>=5.3.4
+django-celery-beat>=2.6.0
+
+# ─── Config ───────────────────────────────────────────────────────────────────
+python-decouple>=3.8
+
+# ─── Auth ─────────────────────────────────────────────────────────────────────
+cryptography>=41.0.7        # For transaction password hashing
+
+# ─── Media / Files ────────────────────────────────────────────────────────────
+Pillow>=10.1.0              # KYC image uploads
+
+# ─── API / Filtering ──────────────────────────────────────────────────────────
+django-filter>=23.0         # DRF queryset filtering
+
+# ─── Server ───────────────────────────────────────────────────────────────────
+gunicorn>=21.2.0
+whitenoise>=6.6.0           # Static files in production
+
+# ─── Utilities ────────────────────────────────────────────────────────────────
+qrcode>=7.4.2               # Referral QR codes
