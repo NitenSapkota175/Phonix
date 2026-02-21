@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% block title %}Ticket #{{ ticket.ticket_number }} — Phonix{% endblock %}
+{% block page_title %}Ticket #{{ ticket.ticket_number }}{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl">
+    <!-- Ticket Info -->
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-white">{{ ticket.subject }}</h2>
+            <span class="px-3 py-1 rounded-full text-sm font-medium
+                {% if ticket.status == 'open' %}bg-brand-500/10 text-brand-400 border border-brand-500/30
+                {% elif ticket.status == 'in_progress' %}bg-amber-500/10 text-amber-400 border border-amber-500/30
+                {% elif ticket.status == 'resolved' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/30
+                {% else %}bg-gray-500/10 text-gray-400 border border-gray-500/30{% endif %}">
+                {{ ticket.get_status_display }}
+            </span>
+        </div>
+        <div class="flex items-center gap-4 text-sm text-gray-500">
+            <span>Priority: <span
+                    class="capitalize {% if ticket.priority == 'high' %}text-red-400{% elif ticket.priority == 'medium' %}text-amber-400{% else %}text-gray-400{% endif %}">{{
+                    ticket.get_priority_display }}</span></span>
+            <span>Created: {{ ticket.created_at|date:"M d, Y H:i" }}</span>
+        </div>
+    </div>
+
+    <!-- Reply Thread -->
+    <div class="space-y-4 mb-6">
+        {% for reply in ticket.replies.all %}
+        <div
+            class="bg-surface-800 rounded-2xl border {% if reply.is_staff_reply %}border-brand-500/20{% else %}border-white/5{% endif %} p-5">
+            <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-8 h-8 rounded-full {% if reply.is_staff_reply %}bg-brand-500/20{% else %}bg-surface-900{% endif %} flex items-center justify-center text-xs font-bold {% if reply.is_staff_reply %}text-brand-400{% else %}text-gray-400{% endif %}">
+                        {{ reply.author.username|first|upper }}
+                    </div>
+                    <span
+                        class="text-sm font-medium {% if reply.is_staff_reply %}text-brand-400{% else %}text-white{% endif %}">
+                        {{ reply.author.username }}
+                        {% if reply.is_staff_reply %}<span class="text-xs text-brand-400/60 ml-1">Staff</span>{% endif
+                        %}
+                    </span>
+                </div>
+                <span class="text-xs text-gray-500">{{ reply.created_at|date:"M d, H:i" }}</span>
+            </div>
+            <p class="text-gray-300 text-sm whitespace-pre-wrap">{{ reply.message }}</p>
+        </div>
+        {% empty %}
+        <div class="text-center text-gray-500 py-8">No replies yet.</div>
+        {% endfor %}
+    </div>
+
+    <!-- Reply Form -->
+    {% if ticket.status != 'closed' %}
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <h3 class="text-white font-semibold mb-4">Add Reply</h3>
+        <form method="post" enctype="multipart/form-data" class="space-y-4">
+            {% csrf_token %}
+            <textarea name="message" rows="4" required
+                class="w-full px-4 py-3 rounded-xl bg-surface-900 border border-white/10 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-500/50 focus:border-brand-500 transition resize-y"
+                placeholder="Type your reply..."></textarea>
+            <div class="flex items-center justify-between">
+                <label class="flex items-center gap-2 text-sm text-gray-400 cursor-pointer">
+                    <input type="file" name="attachment" class="hidden">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" />
+                    </svg>
+                    Attach file
+                </label>
+                <button type="submit"
+                    class="px-6 py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 text-white text-sm font-semibold hover:from-brand-500 hover:to-brand-400 transition">
+                    Send Reply
+                </button>
+            </div>
+        </form>
+    </div>
+    {% endif %}
+
+    <a href="{% url 'support:list' %}"
+        class="inline-flex items-center gap-2 mt-4 text-brand-400 text-sm hover:text-brand-300">← Back to Tickets</a>
+</div>
+{% endblock %}

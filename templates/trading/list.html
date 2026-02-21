@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block title %}My Trades — Phonix{% endblock %}
+{% block page_title %}My Trades{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <p class="text-gray-400 text-sm">Your active and completed trade packages</p>
+    <a href="{% url 'trading:activate' %}"
+        class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 text-white text-sm font-semibold hover:from-brand-500 hover:to-brand-400 transition">
+        + New Trade
+    </a>
+</div>
+
+<div class="bg-surface-800 rounded-2xl border border-white/5 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-white/5">
+                    <th class="px-6 py-3 text-left">Tier</th>
+                    <th class="px-6 py-3 text-left">Amount</th>
+                    <th class="px-6 py-3 text-left">Rate</th>
+                    <th class="px-6 py-3 text-left">Earned</th>
+                    <th class="px-6 py-3 text-left">Cap</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                    <th class="px-6 py-3 text-left">Started</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for trade in trades %}
+                <tr class="hover:bg-white/[0.02] transition">
+                    <td class="px-6 py-3 text-white font-medium">{{ trade.get_tier_display }}</td>
+                    <td class="px-6 py-3 text-white">${{ trade.amount }}</td>
+                    <td class="px-6 py-3 text-brand-400">{{ trade.monthly_rate }}%/mo</td>
+                    <td class="px-6 py-3 text-emerald-400">${{ trade.total_earned }}</td>
+                    <td class="px-6 py-3 text-gray-400">${{ trade.earnings_cap }}</td>
+                    <td class="px-6 py-3">
+                        {% if trade.is_active %}
+                        <span
+                            class="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
+                        {% else %}
+                        <span
+                            class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-500/10 text-gray-400">Completed</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-3 text-gray-500">{{ trade.activated_at|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                        <p class="mb-2">No trades yet.</p>
+                        <a href="{% url 'trading:activate' %}"
+                            class="text-brand-400 hover:text-brand-300 text-sm">Activate your first trade →</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% include 'includes/pagination.html' %}
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}My Team — Phonix{% endblock %}
+{% block page_title %}Direct Referrals{% endblock %}
+
+{% block content %}
+<p class="text-gray-400 text-sm mb-6">Users who registered using your referral code.</p>
+
+<div class="bg-surface-800 rounded-2xl border border-white/5 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-white/5">
+                    <th class="px-6 py-3 text-left">Username</th>
+                    <th class="px-6 py-3 text-left">Email</th>
+                    <th class="px-6 py-3 text-left">Active Investor</th>
+                    <th class="px-6 py-3 text-left">Joined</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for ref in referrals %}
+                <tr class="hover:bg-white/[0.02] transition">
+                    <td class="px-6 py-3 text-white font-medium">{{ ref.username }}</td>
+                    <td class="px-6 py-3 text-gray-400">{{ ref.email }}</td>
+                    <td class="px-6 py-3">
+                        {% if ref.is_active_investor %}
+                        <span
+                            class="px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400">Active</span>
+                        {% else %}
+                        <span
+                            class="px-2 py-0.5 rounded-full text-xs font-medium bg-gray-500/10 text-gray-400">Inactive</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-3 text-gray-500">{{ ref.joined_at|date:"M d, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center text-gray-500">No referrals yet. Share your link to
+                        grow your team!</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include 'includes/pagination.html' %}
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Admin Report — Phonix{% endblock %}
+{% block page_title %}Admin Report{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Users</p>
+        <p class="text-xl font-bold text-white">{{ total_users|default:0 }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Active Investors</p>
+        <p class="text-xl font-bold text-emerald-400">{{ active_investors|default:0 }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Deposits</p>
+        <p class="text-xl font-bold text-brand-400">${{ total_deposits|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Withdrawals</p>
+        <p class="text-xl font-bold text-amber-400">${{ total_withdrawals|default:"0.00" }}</p>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <h3 class="text-white font-semibold mb-4">Platform Overview</h3>
+        <div class="space-y-3 text-sm">
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Total Platform Volume</span>
+                <span class="text-white font-medium">${{ total_volume|default:"0.00" }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Active Trades</span>
+                <span class="text-white font-medium">{{ active_trades_count|default:0 }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Pending Withdrawals</span>
+                <span class="text-amber-400 font-medium">{{ pending_withdrawals|default:0 }}</span>
+            </div>
+            <div class="flex justify-between py-2">
+                <span class="text-gray-400">Pending KYC</span>
+                <span class="text-amber-400 font-medium">{{ pending_kyc|default:0 }}</span>
+            </div>
+        </div>
+    </div>
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <h3 class="text-white font-semibold mb-4">Income Distribution</h3>
+        <div class="space-y-3 text-sm">
+            {% for income_type, total in platform_income.items %}
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400 capitalize">{{ income_type }}</span>
+                <span class="text-emerald-400 font-medium">${{ total }}</span>
+            </div>
+            {% empty %}
+            <p class="text-gray-500 text-center py-4">No data.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

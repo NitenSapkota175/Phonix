@@ -1,0 +1,9 @@
+[Unit]
+Description=Phonix Gunicorn Socket
+
+[Socket]
+ListenStream=/run/phonix/gunicorn.sock
+SocketUser=www-data
+
+[Install]
+WantedBy=sockets.target

@@ -1,0 +1,30 @@
+[Unit]
+Description=Phonix Gunicorn Daemon
+Requires=gunicorn.socket
+After=network.target postgresql.service redis.service
+
+[Service]
+User=phonix
+Group=www-data
+WorkingDirectory=/home/phonix/Phonix
+EnvironmentFile=/home/phonix/Phonix/.env
+ExecStart=/home/phonix/Phonix/venv/bin/gunicorn \
+    --config gunicorn.conf.py \
+    config.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+
+# Hardening
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/home/phonix/Phonix/media /home/phonix/Phonix/logs
+NoNewPrivileges=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=phonix-gunicorn
+
+[Install]
+WantedBy=multi-user.target

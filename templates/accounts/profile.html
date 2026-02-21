@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Profile — Phonix{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl space-y-6">
+    <!-- Profile Card -->
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <div class="flex items-center gap-5 mb-6">
+            <div
+                class="w-16 h-16 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-2xl font-bold">
+                {{ request.user.username|first|upper }}
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-white">{{ request.user.username }}</h2>
+                <p class="text-gray-400 text-sm">{{ request.user.email }}</p>
+                <span
+                    class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-medium
+                    {% if request.user.is_email_verified %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/30{% else %}bg-amber-500/10 text-amber-400 border border-amber-500/30{% endif %}">
+                    {% if request.user.is_email_verified %}Verified{% else %}Email Not Verified{% endif %}
+                </span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+            <div class="bg-surface-900/50 rounded-xl p-4">
+                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Role</p>
+                <p class="text-white font-medium capitalize">{{ request.user.role }}</p>
+            </div>
+            <div class="bg-surface-900/50 rounded-xl p-4">
+                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Phone</p>
+                <p class="text-white font-medium">{{ request.user.phone|default:"Not set" }}</p>
+            </div>
+            <div class="bg-surface-900/50 rounded-xl p-4">
+                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Referral Code</p>
+                <p class="text-brand-400 font-mono font-medium">{{ request.user.referral_code }}</p>
+            </div>
+            <div class="bg-surface-900/50 rounded-xl p-4">
+                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Joined</p>
+                <p class="text-white font-medium">{{ request.user.joined_at|date:"M d, Y" }}</p>
+            </div>
+            <div class="bg-surface-900/50 rounded-xl p-4">
+                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Direct Referrals</p>
+                <p class="text-white font-medium">{{ request.user.direct_referrals_count }}</p>
+            </div>
+            <div class="bg-surface-900/50 rounded-xl p-4">
+                <p class="text-gray-500 text-xs uppercase tracking-wider mb-1">Active Investor</p>
+                <p class="text-white font-medium">{{ request.user.is_active_investor|yesno:"Yes,No" }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <a href="{% url 'accounts:change_password' %}"
+            class="bg-surface-800 rounded-2xl border border-white/5 p-5 hover:border-brand-500/30 transition group">
+            <h3 class="text-white font-semibold group-hover:text-brand-400 transition">Change Password</h3>
+            <p class="text-gray-500 text-sm mt-1">Update your login password</p>
+        </a>
+        <a href="{% url 'accounts:set_txn_password' %}"
+            class="bg-surface-800 rounded-2xl border border-white/5 p-5 hover:border-brand-500/30 transition group">
+            <h3 class="text-white font-semibold group-hover:text-brand-400 transition">Transaction Password</h3>
+            <p class="text-gray-500 text-sm mt-1">Set or change your transaction PIN</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

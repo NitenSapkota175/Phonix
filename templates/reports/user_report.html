@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}My Report — Phonix{% endblock %}
+{% block page_title %}My Report{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Earnings</p>
+        <p class="text-xl font-bold text-emerald-400">${{ total_earnings|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Deposited</p>
+        <p class="text-xl font-bold text-brand-400">${{ total_deposited|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Withdrawn</p>
+        <p class="text-xl font-bold text-amber-400">${{ total_withdrawn|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Active Trades</p>
+        <p class="text-xl font-bold text-purple-400">${{ total_active_trades|default:"0.00" }}</p>
+    </div>
+</div>
+
+<div class="bg-surface-800 rounded-2xl border border-white/5 p-6 mb-6">
+    <h3 class="text-white font-semibold mb-4">Income Breakdown</h3>
+    <div class="space-y-3 text-sm">
+        {% for income_type, total in income_breakdown.items %}
+        <div class="flex items-center justify-between py-2 border-b border-white/5">
+            <span class="text-gray-400 capitalize">{{ income_type }}</span>
+            <span class="text-emerald-400 font-medium">${{ total|default:"0.00" }}</span>
+        </div>
+        {% empty %}
+        <p class="text-gray-500 text-center py-4">No income data available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+    <h3 class="text-white font-semibold mb-4">Account Activity</h3>
+    <div class="grid grid-cols-2 gap-4 text-sm">
+        <div class="bg-surface-900/50 rounded-xl p-4">
+            <p class="text-gray-500 text-xs uppercase mb-1">Direct Referrals</p>
+            <p class="text-white font-bold text-lg">{{ request.user.direct_referrals_count }}</p>
+        </div>
+        <div class="bg-surface-900/50 rounded-xl p-4">
+            <p class="text-gray-500 text-xs uppercase mb-1">Member Since</p>
+            <p class="text-white font-medium">{{ request.user.joined_at|date:"M d, Y" }}</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

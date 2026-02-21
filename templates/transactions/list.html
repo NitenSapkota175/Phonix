@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}Transactions — Phonix{% endblock %}
+{% block page_title %}Transactions{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="flex flex-wrap items-center gap-3 mb-6">
+    <a href="{% url 'transactions:list' %}"
+        class="px-3 py-1.5 rounded-lg text-sm {% if not request.GET.type and not request.GET.status %}bg-brand-500/20 text-brand-400 border border-brand-500/30{% else %}bg-surface-800 text-gray-400 border border-white/10 hover:text-white{% endif %} transition">All</a>
+    <a href="?type=deposit"
+        class="px-3 py-1.5 rounded-lg text-sm {% if request.GET.type == 'deposit' %}bg-brand-500/20 text-brand-400 border border-brand-500/30{% else %}bg-surface-800 text-gray-400 border border-white/10 hover:text-white{% endif %} transition">Deposits</a>
+    <a href="?type=withdrawal"
+        class="px-3 py-1.5 rounded-lg text-sm {% if request.GET.type == 'withdrawal' %}bg-brand-500/20 text-brand-400 border border-brand-500/30{% else %}bg-surface-800 text-gray-400 border border-white/10 hover:text-white{% endif %} transition">Withdrawals</a>
+    <a href="?type=trade"
+        class="px-3 py-1.5 rounded-lg text-sm {% if request.GET.type == 'trade' %}bg-brand-500/20 text-brand-400 border border-brand-500/30{% else %}bg-surface-800 text-gray-400 border border-white/10 hover:text-white{% endif %} transition">Trades</a>
+    <a href="?type=swap"
+        class="px-3 py-1.5 rounded-lg text-sm {% if request.GET.type == 'swap' %}bg-brand-500/20 text-brand-400 border border-brand-500/30{% else %}bg-surface-800 text-gray-400 border border-white/10 hover:text-white{% endif %} transition">Swaps</a>
+    <a href="?status=pending"
+        class="px-3 py-1.5 rounded-lg text-sm {% if request.GET.status == 'pending' %}bg-amber-500/20 text-amber-400 border border-amber-500/30{% else %}bg-surface-800 text-gray-400 border border-white/10 hover:text-white{% endif %} transition">Pending</a>
+</div>
+
+<div class="bg-surface-800 rounded-2xl border border-white/5 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-white/5">
+                    <th class="px-6 py-3 text-left">Type</th>
+                    <th class="px-6 py-3 text-left">Amount</th>
+                    <th class="px-6 py-3 text-left">Fee</th>
+                    <th class="px-6 py-3 text-left">Net</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                    <th class="px-6 py-3 text-left">Wallet</th>
+                    <th class="px-6 py-3 text-left">Date</th>
+                    <th class="px-6 py-3 text-left"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for txn in transactions %}
+                <tr class="hover:bg-white/[0.02] transition">
+                    <td class="px-6 py-3"><span class="capitalize text-gray-300">{{ txn.get_txn_type_display }}</span>
+                    </td>
+                    <td class="px-6 py-3 text-white font-medium">${{ txn.amount }}</td>
+                    <td class="px-6 py-3 text-gray-500">${{ txn.fee }}</td>
+                    <td class="px-6 py-3 text-white">${{ txn.net_amount }}</td>
+                    <td class="px-6 py-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                            {% if txn.status == 'completed' %}bg-emerald-500/10 text-emerald-400
+                            {% elif txn.status == 'pending' %}bg-amber-500/10 text-amber-400
+                            {% elif txn.status == 'approved' %}bg-brand-500/10 text-brand-400
+                            {% else %}bg-red-500/10 text-red-400{% endif %}">
+                            {{ txn.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-3 text-gray-400 capitalize">{{ txn.wallet.wallet_type }}</td>
+                    <td class="px-6 py-3 text-gray-500">{{ txn.created_at|date:"M d, H:i" }}</td>
+                    <td class="px-6 py-3">
+                        <a href="{% url 'transactions:detail' txn.pk %}"
+                            class="text-brand-400 hover:text-brand-300 text-xs">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="px-6 py-12 text-center text-gray-500">No transactions found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include 'includes/pagination.html' %}
+{% endblock %}

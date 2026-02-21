@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Referral Dashboard — Phonix{% endblock %}
+{% block page_title %}Referral Dashboard{% endblock %}
+
+{% block content %}
+<!-- Binary Tree Stats -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-5 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Power Leg</p>
+        <p class="text-2xl font-bold text-brand-400">${{ power_leg|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-5 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Other Leg</p>
+        <p class="text-2xl font-bold text-gray-300">${{ other_leg|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-5 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Direct Referrals</p>
+        <p class="text-2xl font-bold text-emerald-400">{{ direct_count|default:0 }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-5 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-2">Team Volume</p>
+        <p class="text-2xl font-bold text-purple-400">${{ total_team_volume|default:"0.00" }}</p>
+    </div>
+</div>
+
+<!-- Referral Link + Binary Position -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Referral Link -->
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <h3 class="text-white font-semibold mb-4">Your Referral Link</h3>
+        <div class="flex items-center gap-2 mb-4">
+            <input id="ref-link" type="text" readonly value="{{ referral_link|default:'N/A' }}"
+                class="flex-1 px-4 py-3 rounded-xl bg-surface-900 border border-white/10 text-brand-400 text-sm font-mono focus:outline-none">
+            <button
+                onclick="navigator.clipboard.writeText(document.getElementById('ref-link').value); this.textContent='Copied!'; setTimeout(()=>{this.textContent='Copy'},2000)"
+                class="px-4 py-3 rounded-xl bg-brand-500/20 text-brand-400 text-sm font-medium hover:bg-brand-500/30 transition">Copy</button>
+        </div>
+        <p class="text-xs text-gray-500">Referral Code: <span class="text-brand-400 font-mono">{{
+                request.user.referral_code }}</span></p>
+    </div>
+
+    <!-- Binary Position -->
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <h3 class="text-white font-semibold mb-4">Binary Tree Position</h3>
+        <div class="space-y-3 text-sm">
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Position</span>
+                <span class="text-white font-medium capitalize">{{ binary_node.position|default:"Root" }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Left Volume</span>
+                <span class="text-white font-medium">${{ binary_node.left_volume|default:"0.00" }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Right Volume</span>
+                <span class="text-white font-medium">${{ binary_node.right_volume|default:"0.00" }}</span>
+            </div>
+            <div class="flex justify-between py-2">
+                <span class="text-gray-400">Sponsor</span>
+                <span class="text-white font-medium">{{ request.user.referred_by.username|default:"None" }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="{% url 'referral:team' %}"
+    class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-surface-800 border border-white/5 text-brand-400 text-sm font-medium hover:border-brand-500/30 transition">
+    View Direct Team →
+</a>
+{% endblock %}

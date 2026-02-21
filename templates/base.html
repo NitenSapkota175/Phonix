@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Phonix — Next Generation Investment & MLM Platform">
+    <title>{% block title %}Phonix{% endblock %}</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50:  '#f0f5ff',
+                            100: '#e0eaff',
+                            200: '#c2d5ff',
+                            300: '#93b4ff',
+                            400: '#6090ff',
+                            500: '#3b6aff',
+                            600: '#1e45f5',
+                            700: '#1634e1',
+                            800: '#182db6',
+                            900: '#1a2b8f',
+                            950: '#141c57',
+                        },
+                        surface: {
+                            800: '#1e1e2d',
+                            900: '#151521',
+                            950: '#0d0d16',
+                        },
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #151521; }
+        ::-webkit-scrollbar-thumb { background: #3b6aff33; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b6aff66; }
+        /* Sidebar transition */
+        .sidebar-link { transition: all 0.15s ease; }
+        .sidebar-link:hover, .sidebar-link.active { background: linear-gradient(135deg, #3b6aff22, #3b6aff11); border-left-color: #3b6aff; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="h-full bg-surface-950 text-gray-200 antialiased">
+
+{% if user.is_authenticated %}
+<!-- ───── AUTHENTICATED LAYOUT ───── -->
+<div class="flex h-full">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="hidden lg:flex lg:flex-col w-64 bg-surface-900 border-r border-white/5 fixed inset-y-0 z-30">
+        <!-- Logo -->
+        <div class="flex items-center gap-3 px-6 h-16 border-b border-white/5">
+            <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center font-extrabold text-white text-sm">P</div>
+            <span class="text-lg font-bold bg-gradient-to-r from-brand-400 to-brand-300 bg-clip-text text-transparent">Phonix</span>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm">
+            <a href="{% url 'dashboard:index' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'dashboard' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+                Dashboard
+            </a>
+            <a href="{% url 'wallets:overview' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'wallets' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 013 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 013 6v3"/></svg>
+                Wallets
+            </a>
+            <a href="{% url 'trading:list' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'trading' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"/></svg>
+                Trading
+            </a>
+            <a href="{% url 'referral:dashboard' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'referral' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"/></svg>
+                Referral
+            </a>
+            <a href="{% url 'incomes:list' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'incomes' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Incomes
+            </a>
+            <a href="{% url 'transactions:list' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'transactions' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+                Transactions
+            </a>
+            <a href="{% url 'ranks:overview' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'ranks' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M18.75 4.236c.982.143 1.954.317 2.916.52A6.003 6.003 0 0016.27 9.728M18.75 4.236V4.5c0 2.108-.966 3.99-2.48 5.228m0 0a6.023 6.023 0 01-2.77.672c-.993 0-1.929-.24-2.77-.672"/></svg>
+                Ranks
+            </a>
+
+            <div class="pt-4 pb-2 px-3">
+                <p class="text-[11px] font-semibold uppercase tracking-wider text-gray-500">Account</p>
+            </div>
+            <a href="{% url 'kyc:upload' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'kyc' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z"/></svg>
+                KYC
+            </a>
+            <a href="{% url 'support:list' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'support' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z"/></svg>
+                Support
+            </a>
+            <a href="{% url 'reports:user_report' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent {% if request.resolver_match.app_name == 'reports' %}active bg-brand-500/10 border-l-brand-500 text-white{% else %}text-gray-400 hover:text-white{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+                Reports
+            </a>
+            <a href="{% url 'accounts:profile' %}" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg border-l-2 border-transparent text-gray-400 hover:text-white">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                Profile
+            </a>
+        </nav>
+
+        <!-- Sidebar Footer -->
+        <div class="px-4 py-3 border-t border-white/5">
+            <form method="post" action="{% url 'accounts:logout' %}">
+                {% csrf_token %}
+                <button type="submit" class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+                    Logout
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="flex-1 lg:ml-64 flex flex-col min-h-screen">
+        <!-- Top Bar -->
+        <header class="sticky top-0 z-20 bg-surface-900/80 backdrop-blur-xl border-b border-white/5 h-16 flex items-center justify-between px-4 lg:px-8">
+            <!-- Mobile hamburger -->
+            <button id="sidebar-toggle" class="lg:hidden p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/5">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
+            </button>
+
+            <h1 class="text-lg font-semibold text-white">{% block page_title %}Dashboard{% endblock %}</h1>
+
+            <div class="flex items-center gap-4">
+                <span class="hidden sm:inline text-sm text-gray-400">{{ request.user.username }}</span>
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white text-xs font-bold">
+                    {{ request.user.username|first|upper }}
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% if messages %}
+        <div class="px-4 lg:px-8 pt-4 space-y-2">
+            {% for message in messages %}
+            <div class="flex items-center gap-3 px-4 py-3 rounded-lg text-sm
+                {% if message.tags == 'success' %}bg-emerald-500/10 border border-emerald-500/30 text-emerald-400
+                {% elif message.tags == 'error' %}bg-red-500/10 border border-red-500/30 text-red-400
+                {% elif message.tags == 'warning' %}bg-amber-500/10 border border-amber-500/30 text-amber-400
+                {% else %}bg-brand-500/10 border border-brand-500/30 text-brand-400{% endif %}">
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Page Content -->
+        <main class="flex-1 px-4 lg:px-8 py-6">
+            {% block content %}{% endblock %}
+        </main>
+
+        <!-- Footer -->
+        <footer class="px-4 lg:px-8 py-4 border-t border-white/5 text-xs text-gray-500 text-center">
+            &copy; {% now "Y" %} Phonix. All rights reserved.
+        </footer>
+    </div>
+</div>
+
+<!-- Mobile Sidebar Overlay -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black/60 z-20 hidden lg:hidden" onclick="closeSidebar()"></div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebar-overlay');
+    const toggle = document.getElementById('sidebar-toggle');
+
+    function openSidebar() {
+        sidebar.classList.remove('hidden');
+        sidebar.classList.add('flex');
+        overlay.classList.remove('hidden');
+    }
+    function closeSidebar() {
+        sidebar.classList.add('hidden');
+        sidebar.classList.remove('flex');
+        overlay.classList.add('hidden');
+    }
+    if (toggle) toggle.addEventListener('click', openSidebar);
+</script>
+
+{% else %}
+<!-- ───── UNAUTHENTICATED LAYOUT (login, register) ───── -->
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-surface-950 via-surface-900 to-surface-950 px-4">
+    <!-- Flash Messages for auth pages -->
+    {% if messages %}
+    <div class="fixed top-4 right-4 z-50 space-y-2 max-w-sm">
+        {% for message in messages %}
+        <div class="px-4 py-3 rounded-lg text-sm shadow-xl
+            {% if message.tags == 'success' %}bg-emerald-500/10 border border-emerald-500/30 text-emerald-400
+            {% elif message.tags == 'error' %}bg-red-500/10 border border-red-500/30 text-red-400
+            {% else %}bg-brand-500/10 border border-brand-500/30 text-brand-400{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% block auth_content %}{% endblock %}
+</div>
+{% endif %}
+
+{% block extra_scripts %}{% endblock %}
+</body>
+</html>

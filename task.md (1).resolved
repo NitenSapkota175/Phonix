@@ -1,0 +1,82 @@
+# Phonix Platform — Migration & Rebuild Task
+
+## Phase 1: Foundation Setup
+- [ ] Upgrade Django 4.2 → 5.x and update dependencies
+- [ ] Switch DB from SQLite → PostgreSQL config
+- [ ] Restructure project to `apps/` namespace
+- [ ] Create `apps/core` with base models, mixins, utilities
+- [ ] Split [settings.py](file:///Users/NitenSapkota/Desktop/Phonix/phonix/settings.py) into `settings/base.py`, `settings/local.py`, `settings/production.py`
+
+## Phase 2: Accounts & Auth Overhaul
+- [ ] Add `transaction_password` (hashed) to User model
+- [ ] Add email verification flow
+- [ ] Add JWT authentication (DRF + SimpleJWT)
+- [ ] Implement role-based permissions (Admin / User / Support)
+- [ ] Add `apps/kyc` app — document upload + admin approval
+
+## Phase 3: Multi-Wallet System
+- [ ] Create dedicated `Wallet` model with type enum (Main, Trade, Affiliate)
+- [ ] Remove wallet fields from User model
+- [ ] Implement `WalletService` (service layer)
+- [ ] Use F() expressions + select_for_update() for balance updates
+- [ ] Deposit (admin approval), Withdrawal ($10 min, 5% fee, rate limit)
+- [ ] Swap (Main → Trade), Internal Transfer
+- [ ] Earnings cap = 3X subscription per wallet
+
+## Phase 4: Trading App
+- [ ] Create `apps/trading` (rename/refactor from `investment`)
+- [ ] Deduct from Trade Wallet (not Main Wallet)
+- [ ] Implement `TradeService` service layer
+- [ ] Daily ROI Mon-Fri via Celery Beat
+- [ ] Stop ROI at 3X cap
+
+## Phase 5: Binary MLM Referral System
+- [ ] Create `apps/referral` app
+- [ ] Build `BinaryNode` model (parent, left_child, right_child, left_volume, right_volume)
+- [ ] Implement binary placement algorithm
+- [ ] 20-level generation income
+- [ ] Matching bonus logic
+- [ ] Power leg / Other leg calculation
+- [ ] Fresh business tracking
+- [ ] Proper DB indexing on volume fields
+- [ ] `ReferralService` service layer
+
+## Phase 6: Rank System Overhaul
+- [ ] Replace single [Rank](file:///Users/NitenSapkota/Desktop/Phonix/ranks/models.py#5-113) model with 3 models: [Rank](file:///Users/NitenSapkota/Desktop/Phonix/ranks/models.py#5-113), `UserRank`, `RankPayout`
+- [ ] Add all 10 ranks (Connector → Chief)
+- [ ] Implement asymmetric Executive rank condition
+- [ ] `RankService` service layer
+- [ ] Weekly Celery task: qualify → assign → payout → track weeks_paid → prevent duplicates
+
+## Phase 7: Income System
+- [ ] Create `apps/incomes` with unified `Income` model
+- [ ] Support all 6 income types
+- [ ] `source_user` reference on all income records
+
+## Phase 8: Transactions App
+- [ ] Create dedicated `apps/transactions` app
+- [ ] Transaction types: Deposit, Withdrawal, Trade, Swap, Internal Transfer, Income
+- [ ] Status tracking + pagination + filtering
+
+## Phase 9: Support & Reports
+- [ ] Create `apps/support` — ticket + threaded reply + admin panel
+- [ ] Create `apps/reports` — user/admin report generation
+
+## Phase 10: Dashboard Optimization
+- [ ] Optimized aggregate queries (Power Leg, Other Leg, turnover, income)
+- [ ] Redis caching for heavy queries
+- [ ] Avoid N+1 queries (select_related / prefetch_related)
+- [ ] Top 10 transactions widget
+
+## Phase 11: Frontend (Tailwind + Templates)
+- [ ] Integrate Tailwind CSS
+- [ ] Base template with nav, sidebar
+- [ ] Dashboard, Wallet, Trade, Referral, Rank, KYC, Support templates
+
+## Phase 12: Deployment Config
+- [ ] Gunicorn config (`gunicorn.conf.py`)
+- [ ] Nginx server block config
+- [ ] systemd service files (gunicorn + celery + celery-beat)
+- [ ] Let's Encrypt HTTPS setup
+- [ ] Security hardening checklist
+- [ ] Performance tuning guide

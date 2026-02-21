@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard — Phonix{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Wallet Summary Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+    {% with cards="main,trade,affiliate" %}
+    {% for wtype in cards|make_list %}
+    {% endfor %}
+    {% endwith %}
+
+    <!-- Main Wallet -->
+    <div
+        class="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl border border-white/5 p-5 hover:border-brand-500/20 transition">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Main Wallet</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                </svg>
+            </div>
+        </div>
+        <p class="text-3xl font-bold text-white">${{ main_wallet.balance|default:"0.00" }}</p>
+        <p class="text-xs text-gray-500 mt-1">Deposited: ${{ main_wallet.total_deposited|default:"0.00" }}</p>
+    </div>
+
+    <!-- Trade Wallet -->
+    <div
+        class="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl border border-white/5 p-5 hover:border-brand-500/20 transition">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Trade Wallet</span>
+            <div class="w-8 h-8 rounded-lg bg-brand-500/10 flex items-center justify-center">
+                <svg class="w-4 h-4 text-brand-400" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22" />
+                </svg>
+            </div>
+        </div>
+        <p class="text-3xl font-bold text-white">${{ trade_wallet.balance|default:"0.00" }}</p>
+        <p class="text-xs text-gray-500 mt-1">Active trades: ${{ total_trade|default:"0.00" }}</p>
+    </div>
+
+    <!-- Affiliate Wallet -->
+    <div
+        class="bg-gradient-to-br from-surface-800 to-surface-900 rounded-2xl border border-white/5 p-5 hover:border-brand-500/20 transition">
+        <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-semibold uppercase tracking-wider text-gray-500">Affiliate Wallet</span>
+            <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" stroke-width="2"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72" />
+                </svg>
+            </div>
+        </div>
+        <p class="text-3xl font-bold text-white">${{ affiliate_wallet.balance|default:"0.00" }}</p>
+        <p class="text-xs text-gray-500 mt-1">Total earned: ${{ affiliate_wallet.total_earned|default:"0.00" }}</p>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Income</p>
+        <p class="text-xl font-bold text-emerald-400">${{ total_income|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Total Withdrawal</p>
+        <p class="text-xl font-bold text-amber-400">${{ total_withdrawal|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Power Leg</p>
+        <p class="text-xl font-bold text-brand-400">${{ power_leg|default:"0.00" }}</p>
+    </div>
+    <div class="bg-surface-800 rounded-xl border border-white/5 p-4 text-center">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-1">Other Leg</p>
+        <p class="text-xl font-bold text-gray-300">${{ other_leg|default:"0.00" }}</p>
+    </div>
+</div>
+
+<!-- Two column: Team Stats + Referral Link -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <!-- Team Stats -->
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <h3 class="text-white font-semibold mb-4">Team Overview</h3>
+        <div class="space-y-3 text-sm">
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Direct Referrals</span>
+                <span class="text-white font-medium">{{ direct_team_count|default:0 }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Total Team Volume</span>
+                <span class="text-white font-medium">${{ total_team_volume|default:"0.00" }}</span>
+            </div>
+            <div class="flex justify-between py-2 border-b border-white/5">
+                <span class="text-gray-400">Power Leg Volume</span>
+                <span class="text-brand-400 font-medium">${{ power_leg|default:"0.00" }}</span>
+            </div>
+            <div class="flex justify-between py-2">
+                <span class="text-gray-400">Other Leg Volume</span>
+                <span class="text-gray-300 font-medium">${{ other_leg|default:"0.00" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Referral Link -->
+    <div class="bg-surface-800 rounded-2xl border border-white/5 p-6">
+        <h3 class="text-white font-semibold mb-4">Your Referral Link</h3>
+        <p class="text-gray-400 text-sm mb-4">Share this link to grow your network and earn referral income.</p>
+        <div class="flex items-center gap-2">
+            <input id="referral-link" type="text" readonly value="{{ referral_link|default:'N/A' }}"
+                class="flex-1 px-4 py-3 rounded-xl bg-surface-900 border border-white/10 text-brand-400 text-sm font-mono focus:outline-none">
+            <button
+                onclick="navigator.clipboard.writeText(document.getElementById('referral-link').value); this.textContent='Copied!'; setTimeout(()=>{this.textContent='Copy'},2000)"
+                class="px-4 py-3 rounded-xl bg-brand-500/20 text-brand-400 text-sm font-medium hover:bg-brand-500/30 transition whitespace-nowrap">
+                Copy
+            </button>
+        </div>
+        <p class="text-xs text-gray-500 mt-3">Code: <span class="text-brand-400 font-mono">{{ request.user.referral_code
+                }}</span></p>
+    </div>
+</div>
+
+<!-- Recent Transactions -->
+<div class="bg-surface-800 rounded-2xl border border-white/5">
+    <div class="flex items-center justify-between px-6 py-4 border-b border-white/5">
+        <h3 class="text-white font-semibold">Recent Transactions</h3>
+        <a href="{% url 'transactions:list' %}" class="text-brand-400 text-sm hover:text-brand-300">View All →</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-gray-500 text-xs uppercase tracking-wider">
+                    <th class="px-6 py-3 text-left">Type</th>
+                    <th class="px-6 py-3 text-left">Amount</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                    <th class="px-6 py-3 text-left">Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for txn in top_transactions %}
+                <tr class="hover:bg-white/[0.02] transition">
+                    <td class="px-6 py-3">
+                        <span class="capitalize text-gray-300">{{ txn.get_txn_type_display }}</span>
+                    </td>
+                    <td class="px-6 py-3 font-medium text-white">${{ txn.amount }}</td>
+                    <td class="px-6 py-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                            {% if txn.status == 'completed' %}bg-emerald-500/10 text-emerald-400
+                            {% elif txn.status == 'pending' %}bg-amber-500/10 text-amber-400
+                            {% elif txn.status == 'approved' %}bg-brand-500/10 text-brand-400
+                            {% else %}bg-red-500/10 text-red-400{% endif %}">
+                            {{ txn.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-3 text-gray-500">{{ txn.created_at|date:"M d, H:i" }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-8 text-center text-gray-500">No transactions yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Support Tickets — Phonix{% endblock %}
+{% block page_title %}Support Tickets{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+    <p class="text-gray-400 text-sm">Your support tickets and their status</p>
+    <a href="{% url 'support:create' %}"
+        class="px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 text-white text-sm font-semibold hover:from-brand-500 hover:to-brand-400 transition">
+        + New Ticket
+    </a>
+</div>
+
+<div class="bg-surface-800 rounded-2xl border border-white/5 overflow-hidden">
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+            <thead>
+                <tr class="text-gray-500 text-xs uppercase tracking-wider border-b border-white/5">
+                    <th class="px-6 py-3 text-left">Ticket</th>
+                    <th class="px-6 py-3 text-left">Subject</th>
+                    <th class="px-6 py-3 text-left">Priority</th>
+                    <th class="px-6 py-3 text-left">Status</th>
+                    <th class="px-6 py-3 text-left">Date</th>
+                    <th class="px-6 py-3 text-left"></th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for ticket in tickets %}
+                <tr class="hover:bg-white/[0.02] transition">
+                    <td class="px-6 py-3 text-brand-400 font-mono text-xs">#{{ ticket.ticket_number }}</td>
+                    <td class="px-6 py-3 text-white">{{ ticket.subject }}</td>
+                    <td class="px-6 py-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                            {% if ticket.priority == 'high' %}bg-red-500/10 text-red-400
+                            {% elif ticket.priority == 'medium' %}bg-amber-500/10 text-amber-400
+                            {% else %}bg-gray-500/10 text-gray-400{% endif %}">
+                            {{ ticket.get_priority_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-3">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium
+                            {% if ticket.status == 'open' %}bg-brand-500/10 text-brand-400
+                            {% elif ticket.status == 'in_progress' %}bg-amber-500/10 text-amber-400
+                            {% elif ticket.status == 'resolved' %}bg-emerald-500/10 text-emerald-400
+                            {% else %}bg-gray-500/10 text-gray-400{% endif %}">
+                            {{ ticket.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-3 text-gray-500">{{ ticket.created_at|date:"M d, Y" }}</td>
+                    <td class="px-6 py-3">
+                        <a href="{% url 'support:detail' ticket.pk %}"
+                            class="text-brand-400 hover:text-brand-300 text-xs">View</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-500">No support tickets yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% include 'includes/pagination.html' %}
+{% endblock %}

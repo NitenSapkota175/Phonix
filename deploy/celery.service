@@ -1,0 +1,29 @@
+[Unit]
+Description=Phonix Celery Worker
+After=network.target redis.service postgresql.service
+
+[Service]
+User=phonix
+Group=www-data
+WorkingDirectory=/home/phonix/Phonix
+EnvironmentFile=/home/phonix/Phonix/.env
+ExecStart=/home/phonix/Phonix/venv/bin/celery \
+    -A config worker \
+    --loglevel=info \
+    --concurrency=4 \
+    --max-tasks-per-child=100
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=10
+
+# Hardening
+PrivateTmp=true
+NoNewPrivileges=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=phonix-celery
+
+[Install]
+WantedBy=multi-user.target

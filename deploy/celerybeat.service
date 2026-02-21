@@ -1,0 +1,27 @@
+[Unit]
+Description=Phonix Celery Beat Scheduler
+After=network.target redis.service postgresql.service
+
+[Service]
+User=phonix
+Group=www-data
+WorkingDirectory=/home/phonix/Phonix
+EnvironmentFile=/home/phonix/Phonix/.env
+ExecStart=/home/phonix/Phonix/venv/bin/celery \
+    -A config beat \
+    --loglevel=info \
+    --scheduler django_celery_beat.schedulers:DatabaseScheduler
+Restart=on-failure
+RestartSec=10
+
+# Hardening
+PrivateTmp=true
+NoNewPrivileges=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=phonix-celerybeat
+
+[Install]
+WantedBy=multi-user.target
